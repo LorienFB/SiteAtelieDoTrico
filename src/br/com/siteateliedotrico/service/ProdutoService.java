@@ -11,16 +11,17 @@ public class ProdutoService {
 
     public ProdutoService() {
         try {
-            produtoDAO = new ProdutoDAO(); // precisa tratar SQLException
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            // opcional: lançar RuntimeException se não puder continuar
-            throw new RuntimeException("Erro ao criar ProdutoDAO", ex);
+            produtoDAO = new ProdutoDAO();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao conectar com o banco de dados", e);
         }
     }
 
-    public int salvarProduto(Produto produto) {
-        // validações, regras de negócio podem ser adicionadas aqui
-        return produtoDAO.cadastrarProduto(produto); // chama o método correto do DAO
+    public void cadastrarProduto(Produto p) {
+        // Aqui você pode colocar validações
+        if (p.getNomeProduto() == null || p.getNomeProduto().isEmpty()) {
+            throw new IllegalArgumentException("O nome do produto não pode estar vazio.");
+        }
+        produtoDAO.cadastrarProduto(p);
     }
 }
