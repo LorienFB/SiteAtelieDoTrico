@@ -1,4 +1,3 @@
-
 package br.com.siteateliedotrico.dao;
 
 import br.com.siteateliedotrico.model.Produto;
@@ -62,20 +61,19 @@ public class VendaProdutoDAO {
 
             if (rs.next()) {
                 int estoqueAtual = rs.getInt("quantidade_estoque");
-                return estoqueAtual >= quantidade; 
+                return estoqueAtual >= quantidade;
             }
         }
-        return false; 
+        return false;
     }
 
     public void registrarVenda(int vendaId, int produtoId, int quantidadeProduto) throws SQLException {
         try {
             List<VendaProduto> produtosVenda = new ArrayList<>();
 
-            
             if (!verificarEstoque(produtoId, quantidadeProduto)) {
                 JOptionPane.showMessageDialog(null, "Estoque insuficiente para o produto!", "Erro", JOptionPane.ERROR_MESSAGE);
-                return; 
+                return;
             }
 
             Produto produto = new Produto();
@@ -91,7 +89,7 @@ public class VendaProdutoDAO {
             VendaProdutoDAO produtoVendaDAO = new VendaProdutoDAO();
 
             produtoVendaDAO.registrarProdutosVenda(vendaId, produtosVenda);
-            produtoVendaDAO.atualizarEstoque(produtosVenda); 
+            produtoVendaDAO.atualizarEstoque(produtosVenda);
 
             JOptionPane.showMessageDialog(null, "Venda registrada com sucesso!");
 
@@ -99,5 +97,35 @@ public class VendaProdutoDAO {
             JOptionPane.showMessageDialog(null, "Erro ao registrar a venda: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
-}
 
+    public List<VendaProduto> listarPorVenda(int vendaId) throws SQLException {
+        List<VendaProduto> lista = new ArrayList<>();
+
+        String sql = "SELECT vp.*, p.nome_produto, p.preco_venda_produto "
+                + "FROM venda_produto vp "
+                + "JOIN produto p ON vp.produto_id = p.id_produto "
+                + "WHERE vp.venda_id = ?";
+
+        try ( PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, vendaId);
+            ResultSet rs = st.executeQuery();
+
+            while (rs.next()) {
+                VendaProduto vp = new VendaProduto();
+                br.com.siteateliedotrico.model.Produto produto = new br.com.siteateliedotrico.model.Produto();
+
+                produto.setIdProduto(rs.getInt("produto_id"));
+                produto.setNomeProduto(rs.getString("nome_produto"));
+                produto.setPrecoVendaProduto(rs.getDouble("preco_venda_produto"));
+
+                vp.setProdutoId(produto);
+                vp.setQuantidade(rs.getInt("quantidade"));
+                vp.setSubtotal(rs.getDouble("subtotal"));
+
+                lista.add(vp);
+            }
+        }
+        return lista;
+    }
+
+}

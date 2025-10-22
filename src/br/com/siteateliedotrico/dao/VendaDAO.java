@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.sql.Statement;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class VendaDAO {
 
@@ -109,6 +110,25 @@ public class VendaDAO {
         } finally {
             conn.setAutoCommit(true);
         }
+    }
+
+    public List<Venda> listarVendas() {
+        List<Venda> lista = new ArrayList<>();
+        String sql = "SELECT id_venda, vendedor_id, data_venda, total_venda FROM venda ORDER BY data_venda DESC";
+        try ( PreparedStatement st = conn.prepareStatement(sql);  ResultSet rs = st.executeQuery()) {
+
+            while (rs.next()) {
+                Venda v = new Venda();
+                v.setIdVenda(rs.getInt("id_venda"));
+                v.setDataVenda(rs.getString("data_venda"));
+                v.setTotalVenda(rs.getDouble("total_venda"));
+
+                lista.add(v);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erro ao listar vendas: " + ex.getMessage());
+        }
+        return lista;
     }
 
 }
