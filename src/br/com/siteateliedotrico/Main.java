@@ -7,7 +7,6 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Sistema do Ateliê do Tricô iniciado!");
 
-        // Cria o objeto Produto
         Produto produto = new Produto();
         produto.setNomeProduto("Blusa de Lã");
         produto.setDataProduto("2025-10-23");
@@ -16,7 +15,6 @@ public class Main {
         produto.setPrecoCustoProduto(50.00);
         produto.setPrecoVendaProduto(120.00);
 
-        // Cria o service e chama o método de cadastro
         ProdutoService produtoService = new ProdutoService();
         produtoService.cadastrarProduto(produto);
 
