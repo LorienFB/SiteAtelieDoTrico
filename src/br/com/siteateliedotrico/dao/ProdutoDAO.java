@@ -24,10 +24,12 @@ public class ProdutoDAO {
     PreparedStatement st;
     ResultSet rs;
 
-   public int cadastrarProduto(Produto produto) {
+  public int cadastrarProduto(Produto produto) {
     int status = 0;
     try {
-        st = conn.prepareStatement("INSERT INTO produto (nome_produto, data_produto, descricao_produto, quantidade_produto, preco_custo_produto, preco_venda_produto) VALUES (?, ?, ?, ?, ?, ?)");
+        st = conn.prepareStatement(
+            "INSERT INTO produto (nome_produto, data_produto, descricao_produto, quantidade_produto, preco_custo_produto, preco_venda_produto) VALUES (?, ?, ?, ?, ?, ?)"
+        );
         st.setString(1, produto.getNomeProduto());
         st.setString(2, produto.getDataProduto());
         st.setString(3, produto.getDescricaoProduto());
@@ -38,25 +40,23 @@ public class ProdutoDAO {
         status = st.executeUpdate();
 
         if (status > 0) {
-            System.out.println("Produto cadastrado com sucesso! Linhas afetadas: " + status);
+            System.out.println("Produto cadastrado com sucesso!");
         } else {
-            System.out.println("Falha ao cadastrar produto, nenhuma linha foi afetada.");
+            System.out.println("Falha ao cadastrar produto.");
         }
 
     } catch (SQLException ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Erro ao cadastrar produto: " + ex.getMessage());
+        System.out.println("Erro ao cadastrar produto: " + ex.getMessage());
     } finally {
         try {
-            if (st != null) {
-                st.close();
-            }
+            if (st != null) st.close();
         } catch (SQLException e) {
             System.out.println("Erro ao fechar Statement: " + e.getMessage());
         }
     }
     return status;
 }
+
 
 
     public Produto buscarProdutoPorId(int id) {
